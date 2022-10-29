@@ -16,3 +16,4 @@ Terraform learning project, based on AWS infrastructure
 12. Loops
 13. Multi region providers
 14. Remote state
+15. Modules
