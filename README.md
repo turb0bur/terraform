@@ -17,3 +17,4 @@ Terraform learning project, based on AWS infrastructure
 13. Multi region providers
 14. Remote state
 15. Modules
+16. Multiprovider(multi AWS accounts) modules
