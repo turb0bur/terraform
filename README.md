@@ -18,3 +18,4 @@ Terraform learning project, based on AWS infrastructure
 14. Remote state
 15. Modules
 16. Multiprovider(multi AWS accounts) modules
+17. Global variables
