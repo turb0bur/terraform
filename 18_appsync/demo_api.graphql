@@ -1,0 +1,138 @@
+type City {
+	id: ID!
+	name: String!
+	country_id: Int!
+}
+
+input CreateUserInput {
+	first_name: String!
+	last_name: String!
+	address: String
+	email: AWSEmail!
+	birthday: AWSDate
+	office_id: Int!
+	created_at: AWSDateTime
+	updated_at: AWSDateTime
+}
+
+input DeleteUserInput {
+	id: ID!
+}
+
+type Office {
+	id: ID!
+	name: String!
+	address: String!
+	employees_amount: Int!
+}
+
+type Mutation {
+	createUser(input: CreateUserInput!): User
+	updateUser(input: UpdateUserInput!): User
+	deleteUser(input: DeleteUserInput!): User
+}
+
+type Query {
+	getCity(id: ID!): City
+	getOffice(id: ID!): Office
+	listCities(limit: Int): [City]
+	listOffices(limit: Int): [Office]
+	getUser(id: ID!): User
+	listUsers(filter: TableUserFilterInput, limit: Int, nextToken: String): UserConnection
+}
+
+type User {
+	id: ID!
+	first_name: String!
+	last_name: String!
+	address: String
+	email: AWSEmail!
+	birthday: AWSDate
+	office_id: Int!
+	created_at: AWSDateTime
+	updated_at: AWSDateTime
+}
+
+type UserConnection {
+	items: [User]
+	nextToken: String
+}
+
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+input TableUserFilterInput {
+	id: TableIDFilterInput
+	first_name: TableStringFilterInput
+	last_name: TableStringFilterInput
+	class: TableStringFilterInput
+	email: TableStringFilterInput
+	birthday: TableStringFilterInput
+	office_id: TableIntFilterInput
+	created_at: TableStringFilterInput
+	updated_at: TableStringFilterInput
+}
+
+input UpdateUserInput {
+	id: ID!
+	first_name: String!
+	last_name: String!
+	address: String
+	email: AWSEmail!
+	birthday: AWSDate
+	office_id: Int!
+	created_at: AWSDateTime
+	updated_at: AWSDateTime
+}

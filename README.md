@@ -19,3 +19,4 @@ Terraform learning project, based on AWS infrastructure
 15. Modules
 16. Multiprovider(multi AWS accounts) modules
 17. Global variables
+18. AWS AppSync backendless API with multiple data sources 
