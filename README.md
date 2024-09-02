@@ -17,6 +17,8 @@ Terraform learning project, based on AWS infrastructure
 13. Multi region providers
 14. Remote state
 15. Modules
-16. Multiprovider(multi AWS accounts) modules
+16. Multiprovider (multi AWS accounts) modules
 17. Global variables
-18. AWS AppSync backendless API with multiple data sources 
+18. AWS AppSync backendless API with multiple data sources
+19. ALB on 3 EC2 instances with S3 access logs
+20. AWS SDLC (VPC, ALB+ASG)
