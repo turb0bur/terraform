@@ -30,15 +30,6 @@ resource "aws_security_group" "public_sg" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ssh_public" {
-  for_each          = aws_subnet.private
-  security_group_id = aws_security_group.public_sg.id
-  from_port         = var.public_sg_settings.ingress.ssh.from_port
-  to_port           = var.public_sg_settings.ingress.ssh.to_port
-  ip_protocol       = var.public_sg_settings.ingress.ssh.protocol
-  cidr_ipv4         = each.value.cidr_block
-}
-
 resource "aws_vpc_security_group_ingress_rule" "http_public" {
   security_group_id = aws_security_group.public_sg.id
   from_port         = var.public_sg_settings.ingress.http.from_port
@@ -60,14 +51,6 @@ resource "aws_security_group" "private_sg" {
   tags = {
     Name = local.private_sg_name
   }
-}
-
-resource "aws_vpc_security_group_ingress_rule" "ssh_private" {
-  security_group_id            = aws_security_group.private_sg.id
-  from_port                    = var.private_sg_settings.ingress.ssh.from_port
-  to_port                      = var.private_sg_settings.ingress.ssh.to_port
-  ip_protocol                  = var.private_sg_settings.ingress.ssh.protocol
-  referenced_security_group_id = aws_security_group.public_sg.id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "icmp_private" {

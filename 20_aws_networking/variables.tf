@@ -113,18 +113,6 @@ variable "private_route_table_settings" {
   }
 }
 
-variable "ssh_keys_config" {
-  type = object({
-    name = string
-    path = string
-  })
-  description = "The configuration for the SSH keys"
-  default = {
-    name = "deployer-key"
-    path = "~/.ssh/deployer-key.pub"
-  }
-}
-
 variable "public_instances_config" {
   type = object({
     template_prefix_name = string
@@ -337,12 +325,6 @@ variable "public_sg_settings" {
   default = {
     name = "public-sg"
     ingress = {
-      ssh = {
-        from_port  = 22
-        to_port    = 22
-        protocol   = "tcp"
-        cidr_block = ""
-      }
       http = {
         from_port  = 80
         to_port    = 80
@@ -377,12 +359,6 @@ variable "private_sg_settings" {
   default = {
     name = "private-sg"
     ingress = {
-      ssh = {
-        from_port  = 22
-        to_port    = 22
-        protocol   = "tcp"
-        cidr_block = ""
-      }
       icmp = {
         from_port  = -1
         to_port    = -1

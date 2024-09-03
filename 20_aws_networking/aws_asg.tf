@@ -1,13 +1,7 @@
-resource "aws_key_pair" "deployer" {
-  key_name   = var.ssh_keys_config.name
-  public_key = file(var.ssh_keys_config.path)
-}
-
 resource "aws_launch_template" "public" {
   name_prefix   = local.public_instance_prefix_name
   image_id      = var.public_instances_config.ami
   instance_type = local.public_instance_type
-  key_name      = aws_key_pair.deployer.key_name
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ssm_instance_profile.name
@@ -55,7 +49,6 @@ resource "aws_launch_template" "private" {
   name_prefix   = local.private_instance_prefix_name
   image_id      = var.private_instances_config.ami
   instance_type = local.private_instance_type
-  key_name      = aws_key_pair.deployer.key_name
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ssm_instance_profile.name
@@ -102,7 +95,6 @@ resource "aws_launch_template" "nat" {
   name_prefix   = local.nat_instance_prefix_name
   image_id      = var.nat_instances_config.ami
   instance_type = local.nat_instance_type
-  key_name      = aws_key_pair.deployer.key_name
 
   iam_instance_profile {
     name = aws_iam_instance_profile.ssm_instance_profile.name
