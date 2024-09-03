@@ -9,9 +9,9 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  for_each   = var.subnet_settings.public
-  vpc_id     = aws_vpc.main.id
-  cidr_block = local.public_subnet_cidrs[each.key]
+  for_each          = var.subnet_settings.public
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.public_subnet_cidrs[each.key]
   availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.public), each.key))
 
   map_public_ip_on_launch = each.value.map_public_ip_on_launch
@@ -22,9 +22,9 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_subnet" "private" {
-  for_each   = var.subnet_settings.private
-  vpc_id     = aws_vpc.main.id
-  cidr_block = local.private_subnet_cidrs[each.key]
+  for_each          = var.subnet_settings.private
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.private_subnet_cidrs[each.key]
   availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.private), each.key))
 
   tags = {
@@ -56,7 +56,7 @@ resource "aws_route_table" "public" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
-#   TODO Add dynamic assigning of NAT instance to the private route table on ASG events
+  #   TODO Add dynamic assigning of NAT instance to the private route table on ASG events
 
   tags = {
     Name = local.private_rt_name
