@@ -6,65 +6,26 @@ variable "region" {
 variable "vpc_settings" {
   type = object({
     name                 = string
-    dev_cidr             = string
-    prod_cidr            = string
+    cidr                 = string
     enable_dns_support   = bool
     enable_dns_hostnames = bool
   })
   description = "The settings for the VPC"
-  default = {
-    name                 = "main-vpc"
-    dev_cidr             = "10.0.0.0/16"
-    prod_cidr            = "10.1.0.0/16"
-    enable_dns_support   = true
-    enable_dns_hostnames = true
-  }
 }
 
 variable "subnet_settings" {
   type = object({
     public = map(object({
-      dev_cidr                = string
-      prod_cidr               = string
+      cidr                    = string
       map_public_ip_on_launch = bool
       name                    = string
     }))
     private = map(object({
-      dev_cidr  = string
-      prod_cidr = string
-      name      = string
+      cidr = string
+      name = string
     }))
   })
   description = "The settings for the subnets"
-  default = {
-    public = {
-      subnet1 = {
-        dev_cidr                = "10.0.1.0/24"
-        prod_cidr               = "10.1.1.0/24"
-        map_public_ip_on_launch = true
-        name                    = "public-subnet-1"
-      }
-      subnet2 = {
-        dev_cidr                = "10.0.2.0/24"
-        prod_cidr               = "10.1.2.0/24"
-        map_public_ip_on_launch = true
-        name                    = "public-subnet-2"
-      }
-    }
-
-    private = {
-      subnet1 = {
-        dev_cidr  = "10.0.10.0/24"
-        prod_cidr = "10.1.10.0/24"
-        name      = "private-subnet-1"
-      }
-      subnet2 = {
-        dev_cidr  = "10.0.20.0/24"
-        prod_cidr = "10.1.20.0/24"
-        name      = "private-subnet-2"
-      }
-    }
-  }
 }
 
 variable "igw_settings" {
@@ -116,40 +77,23 @@ variable "private_route_table_settings" {
 variable "public_instances_config" {
   type = object({
     template_prefix_name = string
-    dev_instance_type    = string
-    prod_instance_type   = string
+    instance_type        = string
     ami                  = string
     root_volume_name     = string
     ebs_volume = object({
-      dev_size              = number
-      prod_size             = number
+      size                  = number
       type                  = string
       delete_on_termination = bool
     })
   })
   description = "The configuration for the public servers"
-  default = {
-    template_prefix_name = "public-instance-"
-    dev_instance_type    = "t2.micro"
-    prod_instance_type   = "t2.small"
-    ami                  = "ami-0de02246788e4a354"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      dev_size              = 8
-      prod_size             = 20
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
 }
 
 variable "public_asg_config" {
   type = object({
     name                      = string
-    dev_desired_capacity      = number
-    prod_desired_capacity     = number
-    dev_max_size              = number
-    prod_max_size             = number
+    desired_capacity          = number
+    max_size                  = number
     min_size                  = number
     launch_template_version   = string
     health_check_type         = string
@@ -157,59 +101,28 @@ variable "public_asg_config" {
     tags                      = map(string)
   })
   description = "The configuration for the public auto scaling group"
-  default = {
-    name                      = "public-asg"
-    dev_desired_capacity      = 2
-    prod_desired_capacity     = 2
-    dev_max_size              = 2
-    prod_max_size             = 4
-    min_size                  = 1
-    launch_template_version   = "$Latest"
-    health_check_type         = "EC2"
-    health_check_grace_period = 300
-    tags = {
-      Name = "public-asg-instance"
-    }
-  }
 }
 
 variable "private_instances_config" {
   type = object({
     template_prefix_name = string
-    dev_instance_type    = string
-    prod_instance_type   = string
+    instance_type        = string
     ami                  = string
     root_volume_name     = string
     ebs_volume = object({
-      dev_size              = number
-      prod_size             = number
+      size                  = number
       type                  = string
       delete_on_termination = bool
     })
   })
   description = "The configuration for the private servers"
-  default = {
-    template_prefix_name = "private-instance-"
-    dev_instance_type    = "t2.micro"
-    prod_instance_type   = "t2.small"
-    ami                  = "ami-0de02246788e4a354"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      dev_size              = 8
-      prod_size             = 20
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
 }
 
 variable "private_asg_config" {
   type = object({
     name                      = string
-    dev_desired_capacity      = number
-    prod_desired_capacity     = number
-    dev_max_size              = number
-    prod_max_size             = number
+    desired_capacity          = number
+    max_size                  = number
     min_size                  = number
     launch_template_version   = string
     health_check_type         = string
@@ -217,27 +130,12 @@ variable "private_asg_config" {
     tags                      = map(string)
   })
   description = "The configuration for the private auto scaling group"
-  default = {
-    name                      = "private-asg"
-    dev_desired_capacity      = 2
-    prod_desired_capacity     = 2
-    dev_max_size              = 2
-    prod_max_size             = 4
-    min_size                  = 1
-    launch_template_version   = "$Latest"
-    health_check_type         = "EC2"
-    health_check_grace_period = 300
-    tags = {
-      Name = "private-asg-instance"
-    }
-  }
 }
 
 variable "nat_instances_config" {
   type = object({
     template_prefix_name = string
-    dev_instance_type    = string
-    prod_instance_type   = string
+    instance_type        = string
     ami                  = string
     root_volume_name     = string
     ebs_volume = object({
@@ -247,18 +145,6 @@ variable "nat_instances_config" {
     })
   })
   description = "The configuration for the NAT instances"
-  default = {
-    template_prefix_name = "nat-instance-"
-    dev_instance_type    = "t2.micro"
-    prod_instance_type   = "t2.small"
-    ami                  = "ami-0c3b2f7a7308f788a"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      size                  = 8
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
 }
 
 variable "nat_asg_config" {
@@ -286,7 +172,6 @@ variable "nat_asg_config" {
     }
   }
 }
-
 
 
 variable "nat_sg_settings" {
