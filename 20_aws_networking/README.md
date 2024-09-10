@@ -23,13 +23,13 @@ This project includes next AWS services:
 terraform init
 ```
 3. Create and choose a [workspace](#multiple-environments) for the environment
-4. Create a plan providing the region file
+4. Create a plan providing the region and env files 
 ```bash
-terraform plan -var-file=regions/eu-central-1.tfvars
+terraform plan --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
 ```
 5. Apply the plan
 ```bash
-terraform apply -var-file=regions/eu-central-1.tfvars
+terraform apply --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
 ```
 
 ## Multiple environments
@@ -61,5 +61,5 @@ Also, you can add new variables for the existing resources in the region file.
 ## Destroy
 To destroy the infrastructure, run the following command with the region file:
 ```bash
-terraform destroy -var-file=regions/eu-central-1.tfvars
+terraform destroy --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
 ```
