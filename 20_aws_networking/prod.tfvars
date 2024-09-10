@@ -1,94 +1,53 @@
-vpc_settings = {
-  name                 = "main-vpc"
-  cidr                 = "10.1.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+vpc_env_settings = {
+  cidr = "10.1.0.0/16"
 }
 
-subnet_settings = {
+subnet_common_settings = {
   public = {
     subnet1 = {
-      cidr                    = "10.1.1.0/24"
-      map_public_ip_on_launch = true
-      name                    = "public-subnet-1"
+      cidr = "10.1.1.0/24"
     }
     subnet2 = {
-      cidr                    = "10.1.2.0/24"
-      map_public_ip_on_launch = true
-      name                    = "public-subnet-2"
+      cidr = "10.1.2.0/24"
     }
   }
 
   private = {
     subnet1 = {
       cidr = "10.1.10.0/24"
-      name = "private-subnet-1"
     }
     subnet2 = {
       cidr = "10.1.20.0/24"
-      name = "private-subnet-2"
     }
   }
 }
 
-public_instances_config = {
-  template_prefix_name = "public-instance-"
-  instance_type        = "t2.small"
-  ami                  = "ami-0de02246788e4a354"
-  root_volume_name     = "/dev/xvda"
+public_instances_env_config = {
+  instance_type = "t2.small"
   ebs_volume = {
-    size                  = 20
-    type                  = "gp3"
-    delete_on_termination = true
+    size = 20
   }
 }
 
-public_asg_config = {
-  name                      = "public-asg"
-  desired_capacity          = 2
-  max_size                  = 4
-  min_size                  = 1
-  launch_template_version   = "$Latest"
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
-  tags = {
-    Name = "public-asg-instance"
-  }
+public_asg_env_config = {
+  desired_capacity = 2
+  max_size         = 4
+  min_size         = 1
 }
 
-private_instances_config = {
-  template_prefix_name = "private-instance-"
-  instance_type        = "t2.small"
-  ami                  = "ami-0de02246788e4a354"
-  root_volume_name     = "/dev/xvda"
+private_instances_env_config = {
+  instance_type = "t2.small"
   ebs_volume = {
-    size                  = 20
-    type                  = "gp3"
-    delete_on_termination = true
+    size = 20
   }
 }
 
-private_asg_config = {
-  name                      = "private-asg"
-  desired_capacity          = 2
-  max_size                  = 4
-  min_size                  = 1
-  launch_template_version   = "$Latest"
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
-  tags = {
-    Name = "private-asg-instance"
-  }
+private_asg_env_config = {
+  desired_capacity = 2
+  max_size         = 4
+  min_size         = 1
 }
 
-nat_instances_config = {
-  template_prefix_name = "nat-instance-"
-  instance_type        = "t2.small"
-  ami                  = "ami-0c3b2f7a7308f788a"
-  root_volume_name     = "/dev/xvda"
-  ebs_volume = {
-    size                  = 8
-    type                  = "gp3"
-    delete_on_termination = true
-  }
+nat_instances_env_config = {
+  instance_type = "t2.small"
 }

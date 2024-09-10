@@ -12,11 +12,11 @@ resource "aws_launch_template" "public" {
   }
 
   block_device_mappings {
-    device_name = var.public_instances_config.root_volume_name
+    device_name = var.public_instances_common_config.root_volume_name
     ebs {
       volume_size           = local.public_instance_ebs_size
-      volume_type           = var.public_instances_config.ebs_volume.type
-      delete_on_termination = var.public_instances_config.ebs_volume.delete_on_termination
+      volume_type           = var.public_instances_common_config.ebs_volume.type
+      delete_on_termination = var.public_instances_common_config.ebs_volume.delete_on_termination
     }
   }
   user_data = filebase64("${path.module}/templates/public_user_data.sh")
@@ -26,14 +26,14 @@ resource "aws_autoscaling_group" "public" {
   name                = local.public_asg_name
   desired_capacity    = local.public_asg_desired_capacity
   max_size            = local.public_asg_max_size
-  min_size            = var.public_asg_config.min_size
+  min_size            = local.public_asg_min_size
   vpc_zone_identifier = [for subnet in aws_subnet.public : subnet.id]
   launch_template {
     id      = aws_launch_template.public.id
-    version = var.public_asg_config.launch_template_version
+    version = var.public_common_asg_config.launch_template_version
   }
-  health_check_type         = var.public_asg_config.health_check_type
-  health_check_grace_period = var.public_asg_config.health_check_grace_period
+  health_check_type         = var.public_common_asg_config.health_check_type
+  health_check_grace_period = var.public_common_asg_config.health_check_grace_period
 
   dynamic "tag" {
     for_each = local.public_asg_ec2_tags
@@ -59,11 +59,11 @@ resource "aws_launch_template" "private" {
   }
 
   block_device_mappings {
-    device_name = var.private_instances_config.root_volume_name
+    device_name = var.private_instances_common_config.root_volume_name
     ebs {
       volume_size           = local.private_instance_ebs_size
-      volume_type           = var.private_instances_config.ebs_volume.type
-      delete_on_termination = var.private_instances_config.ebs_volume.delete_on_termination
+      volume_type           = var.private_instances_common_config.ebs_volume.type
+      delete_on_termination = var.private_instances_common_config.ebs_volume.delete_on_termination
     }
   }
 }
@@ -72,14 +72,14 @@ resource "aws_autoscaling_group" "private" {
   name                = local.private_asg_name
   desired_capacity    = local.private_asg_desired_capacity
   max_size            = local.private_asg_max_size
-  min_size            = var.private_asg_config.min_size
+  min_size            = local.private_asg_min_size
   vpc_zone_identifier = [for subnet in aws_subnet.private : subnet.id]
   launch_template {
     id      = aws_launch_template.private.id
-    version = var.private_asg_config.launch_template_version
+    version = var.private_asg_common_config.launch_template_version
   }
-  health_check_type         = var.private_asg_config.health_check_type
-  health_check_grace_period = var.private_asg_config.health_check_grace_period
+  health_check_type         = var.private_asg_common_config.health_check_type
+  health_check_grace_period = var.private_asg_common_config.health_check_grace_period
 
   dynamic "tag" {
     for_each = local.private_asg_ec2_tags
@@ -105,11 +105,11 @@ resource "aws_launch_template" "nat" {
   }
 
   block_device_mappings {
-    device_name = var.nat_instances_config.root_volume_name
+    device_name = var.nat_instances_common_config.root_volume_name
     ebs {
-      volume_size           = var.nat_instances_config.ebs_volume.size
-      volume_type           = var.nat_instances_config.ebs_volume.type
-      delete_on_termination = var.nat_instances_config.ebs_volume.delete_on_termination
+      volume_size           = var.nat_instances_common_config.ebs_volume.size
+      volume_type           = var.nat_instances_common_config.ebs_volume.type
+      delete_on_termination = var.nat_instances_common_config.ebs_volume.delete_on_termination
     }
   }
 }

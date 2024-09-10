@@ -4,53 +4,95 @@ variable "region" {
 }
 
 variable "ami" {
-    description = "The region specific AMI IDs"
-    type        = map(string)
+  description = "The region specific AMI IDs"
+  type        = map(string)
 }
 
-variable "vpc_settings" {
+variable "vpc_common_settings" {
+  description = "The common settings for the VPC"
   type = object({
     name                 = string
-    cidr                 = string
     enable_dns_support   = bool
     enable_dns_hostnames = bool
   })
-  description = "The settings for the VPC"
+  default = {
+    name                 = "main-vpc"
+    enable_dns_support   = true
+    enable_dns_hostnames = true
+  }
 }
 
-variable "subnet_settings" {
+variable "vpc_env_settings" {
+  description = "Environment specific settings for the VPC"
+  type = object({
+    cidr = string
+  })
+}
+
+variable "subnet_common_settings" {
+  description = "The settings for the subnets"
   type = object({
     public = map(object({
-      cidr                    = string
       map_public_ip_on_launch = bool
       name                    = string
     }))
     private = map(object({
-      cidr = string
       name = string
     }))
   })
-  description = "The settings for the subnets"
+  default = {
+    public = {
+      subnet1 = {
+        map_public_ip_on_launch = true
+        name                    = "public-subnet-1"
+      }
+      subnet2 = {
+        map_public_ip_on_launch = true
+        name                    = "public-subnet-2"
+      }
+    }
+
+    private = {
+      subnet1 = {
+        name = "private-subnet-1"
+      }
+      subnet2 = {
+        name = "private-subnet-2"
+      }
+    }
+  }
+}
+
+variable "subnet_env_settings" {
+  description = "The environment specific settings for the subnets"
+  type = object({
+    public = map(object({
+      cidr = string
+    }))
+    private = map(object({
+      cidr = string
+    }))
+  })
 }
 
 variable "igw_settings" {
+  description = "The settings for the internet gateway"
   type = object({
     name = string
   })
-  description = "The settings for the internet gateway"
   default = {
     name = "main-igw"
   }
 }
 
 variable "public_route_table_settings" {
+  description = "The settings for the public route table"
   type = object({
     routes = map(object({
       cidr_block = string
     }))
     name = string
   })
-  description = "The settings for the public route table"
   default = {
     routes = {
       internet = {
@@ -62,13 +104,13 @@ variable "public_route_table_settings" {
 }
 
 variable "private_route_table_settings" {
+  description = "The settings for the private route table"
   type = object({
     routes = map(object({
       cidr_block = string
     }))
     name = string
   })
-  description = "The settings for the private route table"
   default = {
     routes = {
       internet = {
@@ -79,66 +121,128 @@ variable "private_route_table_settings" {
   }
 }
 
-variable "public_instances_config" {
+variable "public_instances_common_config" {
+  description = "The common configuration for the public servers"
   type = object({
     template_prefix_name = string
-    instance_type        = string
     root_volume_name     = string
     ebs_volume = object({
-      size                  = number
       type                  = string
       delete_on_termination = bool
     })
   })
-  description = "The configuration for the public servers"
+  default = {
+    template_prefix_name = "public-instance-"
+    root_volume_name     = "/dev/xvda"
+    ebs_volume = {
+      type                  = "gp3"
+      delete_on_termination = true
+    }
+  }
 }
 
-variable "public_asg_config" {
+variable "public_instances_env_config" {
+  description = "Environment specific configuration for the public servers"
+  type = object({
+    instance_type = string
+    ebs_volume = object({
+      size = number
+    })
+  })
+}
+
+variable "public_common_asg_config" {
+  description = "The common configuration for the public auto scaling group"
   type = object({
     name                      = string
-    desired_capacity          = number
-    max_size                  = number
-    min_size                  = number
     launch_template_version   = string
     health_check_type         = string
     health_check_grace_period = number
     tags                      = map(string)
   })
-  description = "The configuration for the public auto scaling group"
+  default = {
+    name                      = "public-asg"
+    launch_template_version   = "$Latest"
+    health_check_type         = "EC2"
+    health_check_grace_period = 300
+    tags = {
+      Name = "public-asg-instance"
+    }
+  }
 }
 
-variable "private_instances_config" {
+variable "public_asg_env_config" {
+  description = "The environment specific configuration for the public auto scaling group"
   type = object({
-    template_prefix_name = string
-    instance_type        = string
-    root_volume_name     = string
-    ebs_volume = object({
-      size                  = number
-      type                  = string
-      delete_on_termination = bool
-    })
+    desired_capacity = number
+    max_size         = number
+    min_size         = number
   })
+}
+
+variable "private_instances_common_config" {
   description = "The configuration for the private servers"
+  type = object({
+    template_prefix_name = string
+    root_volume_name     = string
+    ebs_volume = object({
+      type                  = string
+      delete_on_termination = bool
+    })
+  })
+  default = {
+    template_prefix_name = "private-instance-"
+    root_volume_name     = "/dev/xvda"
+    ebs_volume = {
+      type                  = "gp3"
+      delete_on_termination = true
+    }
+  }
 }
 
-variable "private_asg_config" {
+variable "private_instances_env_config" {
+  description = "The environment specific configuration for the private servers"
+  type = object({
+    instance_type = string
+    ebs_volume = object({
+      size = number
+    })
+  })
+}
+
+variable "private_asg_common_config" {
+  description = "The configuration for the private auto scaling group"
   type = object({
     name                      = string
-    desired_capacity          = number
-    max_size                  = number
-    min_size                  = number
     launch_template_version   = string
     health_check_type         = string
     health_check_grace_period = number
     tags                      = map(string)
   })
-  description = "The configuration for the private auto scaling group"
+  default = {
+    name                      = "private-asg"
+    launch_template_version   = "$Latest"
+    health_check_type         = "EC2"
+    health_check_grace_period = 300
+    tags = {
+      Name = "private-asg-instance"
+    }
+  }
 }
 
-variable "nat_instances_config" {
+variable "private_asg_env_config" {
+  description = "The environment specific configuration for the private auto scaling group"
+  type = object({
+    desired_capacity = number
+    max_size         = number
+    min_size         = number
+  })
+}
+
+variable "nat_instances_common_config" {
+  description = "The configuration for the NAT instances"
   type = object({
     template_prefix_name = string
-    instance_type        = string
     root_volume_name     = string
     ebs_volume = object({
       size                  = number
@@ -146,7 +250,22 @@ variable "nat_instances_config" {
       delete_on_termination = bool
     })
   })
-  description = "The configuration for the NAT instances"
+  default = {
+    template_prefix_name = "nat-instance-"
+    root_volume_name     = "/dev/xvda"
+    ebs_volume = {
+      size                  = 8
+      type                  = "gp3"
+      delete_on_termination = true
+    }
+  }
+}
+
+variable "nat_instances_env_config" {
+  description = "The environment specific configuration for the NAT instances"
+  type = object({
+    instance_type = string
+  })
 }
 
 variable "nat_asg_config" {
@@ -178,16 +297,36 @@ variable "nat_asg_config" {
 
 variable "nat_sg_settings" {
   description = "The settings for the NAT security group"
+  type = object({
+    name = string
+    ingress = map(object({
+      protocol   = string
+      from_port  = number
+      to_port    = number
+      cidr_block = string
+    }))
+    egress = map(object({
+      protocol   = string
+      from_port  = number
+      to_port    = number
+      cidr_block = string
+    }))
+  })
   default = {
     name = "nat-sg"
     ingress = {
       default = {
-        protocol = "-1"
+        protocol   = "-1"
+        from_port  = 0
+        to_port    = 0
+        cidr_block = ""
       }
     }
     egress = {
       default = {
         protocol   = "-1"
+        from_port  = 0
+        to_port    = 0
         cidr_block = "0.0.0.0/0"
       }
     }
@@ -195,6 +334,7 @@ variable "nat_sg_settings" {
 }
 
 variable "public_sg_settings" {
+  description = "The settings for the public security group"
   type = object({
     name = string
     ingress = map(object({
@@ -208,7 +348,6 @@ variable "public_sg_settings" {
       cidr_block = string
     }))
   })
-  description = "The settings for the public security group"
   default = {
     name = "public-sg"
     ingress = {
@@ -229,6 +368,7 @@ variable "public_sg_settings" {
 }
 
 variable "private_sg_settings" {
+  description = "The settings for the private security group"
   type = object({
     name = string
     ingress = map(object({
@@ -242,7 +382,6 @@ variable "private_sg_settings" {
       cidr_block = string
     }))
   })
-  description = "The settings for the private security group"
   default = {
     name = "private-sg"
     ingress = {
@@ -270,6 +409,10 @@ variable "private_sg_settings" {
 
 variable "public_alb_config" {
   description = "The configuration for the public application load balancer"
+  type = object({
+    name    = string
+    tg_name = string
+  })
   default = {
     name    = "public-alb"
     tg_name = "public-tg"
@@ -278,6 +421,10 @@ variable "public_alb_config" {
 
 variable "private_alb_config" {
   description = "The configuration for the private application load balancer"
+  type = object({
+    name    = string
+    tg_name = string
+  })
   default = {
     name    = "private-alb"
     tg_name = "private-tg"

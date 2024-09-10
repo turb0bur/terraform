@@ -1,7 +1,7 @@
 resource "aws_vpc" "main" {
   cidr_block           = local.vpc_cidr
-  enable_dns_support   = var.vpc_settings.enable_dns_support
-  enable_dns_hostnames = var.vpc_settings.enable_dns_hostnames
+  enable_dns_support   = var.vpc_common_settings.enable_dns_support
+  enable_dns_hostnames = var.vpc_common_settings.enable_dns_hostnames
 
   tags = {
     Name = local.vpc_name
@@ -9,10 +9,10 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public" {
-  for_each          = var.subnet_settings.public
+  for_each          = var.subnet_common_settings.public
   vpc_id            = aws_vpc.main.id
   cidr_block        = local.public_subnet_cidrs[each.key]
-  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.public), each.key))
+  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_common_settings.public), each.key))
 
   map_public_ip_on_launch = each.value.map_public_ip_on_launch
 
@@ -22,10 +22,10 @@ resource "aws_subnet" "public" {
 }
 
 resource "aws_subnet" "private" {
-  for_each          = var.subnet_settings.private
+  for_each          = var.subnet_common_settings.private
   vpc_id            = aws_vpc.main.id
   cidr_block        = local.private_subnet_cidrs[each.key]
-  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.private), each.key))
+  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_common_settings.private), each.key))
 
   tags = {
     Name = local.private_subnet_names[each.key]
