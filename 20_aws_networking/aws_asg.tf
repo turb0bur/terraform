@@ -1,6 +1,6 @@
 resource "aws_launch_template" "public" {
   name_prefix   = local.public_instance_prefix_name
-  image_id      = var.public_instances_config.ami
+  image_id      = var.ami.public
   instance_type = local.public_instance_type
 
   iam_instance_profile {
@@ -47,7 +47,7 @@ resource "aws_autoscaling_group" "public" {
 
 resource "aws_launch_template" "private" {
   name_prefix   = local.private_instance_prefix_name
-  image_id      = var.private_instances_config.ami
+  image_id      = var.ami.private
   instance_type = local.private_instance_type
 
   iam_instance_profile {
@@ -93,7 +93,7 @@ resource "aws_autoscaling_group" "private" {
 
 resource "aws_launch_template" "nat" {
   name_prefix   = local.nat_instance_prefix_name
-  image_id      = var.nat_instances_config.ami
+  image_id      = var.ami.nat
   instance_type = local.nat_instance_type
 
   iam_instance_profile {

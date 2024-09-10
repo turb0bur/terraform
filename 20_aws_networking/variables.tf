@@ -3,6 +3,11 @@ variable "region" {
   type        = string
 }
 
+variable "ami" {
+    description = "The region specific AMI IDs"
+    type        = map(string)
+}
+
 variable "vpc_settings" {
   type = object({
     name                 = string
@@ -78,7 +83,6 @@ variable "public_instances_config" {
   type = object({
     template_prefix_name = string
     instance_type        = string
-    ami                  = string
     root_volume_name     = string
     ebs_volume = object({
       size                  = number
@@ -107,7 +111,6 @@ variable "private_instances_config" {
   type = object({
     template_prefix_name = string
     instance_type        = string
-    ami                  = string
     root_volume_name     = string
     ebs_volume = object({
       size                  = number
@@ -136,7 +139,6 @@ variable "nat_instances_config" {
   type = object({
     template_prefix_name = string
     instance_type        = string
-    ami                  = string
     root_volume_name     = string
     ebs_volume = object({
       size                  = number
