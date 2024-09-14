@@ -4,7 +4,7 @@ resource "aws_security_group" "nat_sg" {
   name   = var.nat_sg_settings.name
 
   tags = {
-    Name = local.nat_sg_name
+    Name = format(local.resource_name, var.nat_sg_settings.name)
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_security_group" "public_sg" {
   name   = var.public_sg_settings.name
 
   tags = {
-    Name = local.public_sg_name
+    Name = format(local.resource_name, var.public_sg_settings.name)
   }
 }
 
@@ -49,7 +49,7 @@ resource "aws_security_group" "private_sg" {
   name   = var.private_sg_settings.name
 
   tags = {
-    Name = local.private_sg_name
+    Name = format(local.resource_name, var.private_sg_settings.name)
   }
 }
 

@@ -3,73 +3,31 @@ variable "region" {
   type        = string
 }
 
-variable "ami" {
-  description = "The region specific AMI IDs"
-  type        = map(string)
+variable "environment" {
+  description = "The environment"
+  type        = string
 }
 
-variable "vpc_common_settings" {
+variable "vpc_settings" {
   description = "The common settings for the VPC"
   type = object({
     name                 = string
+    cidr                 = string
     enable_dns_support   = bool
     enable_dns_hostnames = bool
   })
-  default = {
-    name                 = "main-vpc"
-    enable_dns_support   = true
-    enable_dns_hostnames = true
-  }
 }
 
-variable "vpc_env_settings" {
-  description = "Environment specific settings for the VPC"
-  type = object({
-    cidr = string
-  })
-}
-
-variable "subnet_common_settings" {
+variable "subnet_settings" {
   description = "The settings for the subnets"
   type = object({
     public = map(object({
       map_public_ip_on_launch = bool
       name                    = string
+      cidr                    = string
     }))
     private = map(object({
       name = string
-    }))
-  })
-  default = {
-    public = {
-      subnet1 = {
-        map_public_ip_on_launch = true
-        name                    = "public-subnet-1"
-      }
-      subnet2 = {
-        map_public_ip_on_launch = true
-        name                    = "public-subnet-2"
-      }
-    }
-
-    private = {
-      subnet1 = {
-        name = "private-subnet-1"
-      }
-      subnet2 = {
-        name = "private-subnet-2"
-      }
-    }
-  }
-}
-
-variable "subnet_env_settings" {
-  description = "The environment specific settings for the subnets"
-  type = object({
-    public = map(object({
-      cidr = string
-    }))
-    private = map(object({
       cidr = string
     }))
   })
@@ -121,127 +79,11 @@ variable "private_route_table_settings" {
   }
 }
 
-variable "public_instances_common_config" {
+variable "public_instances_config" {
   description = "The common configuration for the public servers"
   type = object({
-    template_prefix_name = string
-    root_volume_name     = string
-    ebs_volume = object({
-      type                  = string
-      delete_on_termination = bool
-    })
-  })
-  default = {
-    template_prefix_name = "public-instance-"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
-}
-
-variable "public_instances_env_config" {
-  description = "Environment specific configuration for the public servers"
-  type = object({
-    instance_type = string
-    ebs_volume = object({
-      size = number
-    })
-  })
-}
-
-variable "public_common_asg_config" {
-  description = "The common configuration for the public auto scaling group"
-  type = object({
-    name                      = string
-    launch_template_version   = string
-    health_check_type         = string
-    health_check_grace_period = number
-    tags                      = map(string)
-  })
-  default = {
-    name                      = "public-asg"
-    launch_template_version   = "$Latest"
-    health_check_type         = "EC2"
-    health_check_grace_period = 300
-    tags = {
-      Name = "public-asg-instance"
-    }
-  }
-}
-
-variable "public_asg_env_config" {
-  description = "The environment specific configuration for the public auto scaling group"
-  type = object({
-    desired_capacity = number
-    max_size         = number
-    min_size         = number
-  })
-}
-
-variable "private_instances_common_config" {
-  description = "The configuration for the private servers"
-  type = object({
-    template_prefix_name = string
-    root_volume_name     = string
-    ebs_volume = object({
-      type                  = string
-      delete_on_termination = bool
-    })
-  })
-  default = {
-    template_prefix_name = "private-instance-"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
-}
-
-variable "private_instances_env_config" {
-  description = "The environment specific configuration for the private servers"
-  type = object({
-    instance_type = string
-    ebs_volume = object({
-      size = number
-    })
-  })
-}
-
-variable "private_asg_common_config" {
-  description = "The configuration for the private auto scaling group"
-  type = object({
-    name                      = string
-    launch_template_version   = string
-    health_check_type         = string
-    health_check_grace_period = number
-    tags                      = map(string)
-  })
-  default = {
-    name                      = "private-asg"
-    launch_template_version   = "$Latest"
-    health_check_type         = "EC2"
-    health_check_grace_period = 300
-    tags = {
-      Name = "private-asg-instance"
-    }
-  }
-}
-
-variable "private_asg_env_config" {
-  description = "The environment specific configuration for the private auto scaling group"
-  type = object({
-    desired_capacity = number
-    max_size         = number
-    min_size         = number
-  })
-}
-
-variable "nat_instances_common_config" {
-  description = "The configuration for the NAT instances"
-  type = object({
+    ami                  = string
+    instance_type        = string
     template_prefix_name = string
     root_volume_name     = string
     ebs_volume = object({
@@ -250,21 +92,63 @@ variable "nat_instances_common_config" {
       delete_on_termination = bool
     })
   })
-  default = {
-    template_prefix_name = "nat-instance-"
-    root_volume_name     = "/dev/xvda"
-    ebs_volume = {
-      size                  = 8
-      type                  = "gp3"
-      delete_on_termination = true
-    }
-  }
 }
 
-variable "nat_instances_env_config" {
-  description = "The environment specific configuration for the NAT instances"
+variable "public_asg_config" {
+  description = "The common configuration for the public auto scaling group"
   type = object({
-    instance_type = string
+    name                      = string
+    desired_capacity          = number
+    max_size                  = number
+    min_size                  = number
+    launch_template_version   = string
+    health_check_type         = string
+    health_check_grace_period = number
+    tags                      = map(string)
+  })
+}
+
+variable "private_instances_config" {
+  description = "The configuration for the private servers"
+  type = object({
+    ami                  = string
+    instance_type        = string
+    template_prefix_name = string
+    root_volume_name     = string
+    ebs_volume = object({
+      size                  = number
+      type                  = string
+      delete_on_termination = bool
+    })
+  })
+}
+
+variable "private_asg_config" {
+  description = "The configuration for the private auto scaling group"
+  type = object({
+    name                      = string
+    desired_capacity          = number
+    max_size                  = number
+    min_size                  = number
+    launch_template_version   = string
+    health_check_type         = string
+    health_check_grace_period = number
+    tags                      = map(string)
+  })
+}
+
+variable "nat_instances_config" {
+  description = "The configuration for the NAT instances"
+  type = object({
+    ami                  = string
+    instance_type        = string
+    template_prefix_name = string
+    root_volume_name     = string
+    ebs_volume = object({
+      size                  = number
+      type                  = string
+      delete_on_termination = bool
+    })
   })
 }
 
