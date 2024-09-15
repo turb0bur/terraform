@@ -22,44 +22,38 @@ This project includes next AWS services:
 ```bash
 terraform init
 ```
-3. Create and choose a [workspace](#multiple-environments) for the environment
-4. Create a plan providing the region and env files 
+3. Create and choose a [workspace](#multiple-workspaces) for the environment
+4. Create a .tfvars file for the workspace e.g. `workspaces/euc1-test.tfvars` and add needed values.
+5. Create corresponding plan providing the workspace file  
 ```bash
-terraform plan --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
+terraform plan --var-file=workspaces/euc1-dev.tfvars
 ```
-5. Apply the plan
+6. Apply the plan
 ```bash
-terraform apply --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
+terraform apply --var-file=workspaces/euc1-dev.tfvars
 ```
 
-## Multiple environments
+## Multiple workspaces
 
-The project supports multiple environments (dev, stage, prod) and can be deployed using workspaces.
-
-To add a new environment, create a new workspace and set the environment variables.
-
+The project supports multiple workspaces. Workspace is a combination of AWS region and environment e.g. `euc1-dev` or `use1-prod`.
+To create a new workspace, use the following command:
 ```bash
-terraform workspace new dev
+terraform workspace new euc1-test
 ```
 To switch between environments, use the following command:
 
 ```bash
-terraform workspace select dev
+terraform workspace select euc1-test
 ```
 To list all available workspaces, use the following command:
 
 ```bash
 terraform workspace list
 ```
-There are two environments by default: **dev** and **prod** with corresponding set of variables.
-After adding a new environment, you need to create a new .tfvars file e.g. `stage.tfvars` and add the values for the new environment.
-
-## Multiple regions
-You can deploy the project in multiple regions by providing the region file.
-Also, you can add new variables for the existing resources in the region file.
+There are 4 predefined workspaces (2 regions * 2 envs) by default: **euc1-dev**, **euc1-prod**, **eun1-dev**, **eun1-prod** with corresponding set of variables.
 
 ## Destroy
 To destroy the infrastructure, run the following command with the region file:
 ```bash
-terraform destroy --var-file="regions/eu-central-1.tfvars" --var-file="dev.tfvars"
+terraform destroy --var-file=workspaces/euc1-dev.tfvars
 ```
