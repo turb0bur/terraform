@@ -167,7 +167,7 @@ variable "nat_asg_config" {
   default = {
     name                      = "nat-asg"
     desired_capacity          = 1
-    max_size                  = 2
+    max_size                  = 1
     min_size                  = 1
     launch_template_version   = "$Latest"
     health_check_type         = "EC2"
