@@ -183,37 +183,9 @@ variable "nat_sg_settings" {
   description = "The settings for the NAT security group"
   type = object({
     name = string
-    ingress = map(object({
-      protocol   = string
-      from_port  = number
-      to_port    = number
-      cidr_block = string
-    }))
-    egress = map(object({
-      protocol   = string
-      from_port  = number
-      to_port    = number
-      cidr_block = string
-    }))
   })
   default = {
     name = "nat-sg"
-    ingress = {
-      default = {
-        protocol   = "-1"
-        from_port  = 0
-        to_port    = 0
-        cidr_block = ""
-      }
-    }
-    egress = {
-      default = {
-        protocol   = "-1"
-        from_port  = 0
-        to_port    = 0
-        cidr_block = "0.0.0.0/0"
-      }
-    }
   }
 }
 
@@ -221,33 +193,9 @@ variable "public_sg_settings" {
   description = "The settings for the public security group"
   type = object({
     name = string
-    ingress = map(object({
-      from_port  = number
-      to_port    = number
-      protocol   = string
-      cidr_block = string
-    }))
-    egress = map(object({
-      protocol   = string
-      cidr_block = string
-    }))
   })
   default = {
     name = "public-sg"
-    ingress = {
-      http = {
-        from_port  = 80
-        to_port    = 80
-        protocol   = "tcp"
-        cidr_block = "0.0.0.0/0"
-      }
-    }
-    egress = {
-      default = {
-        protocol   = "-1"
-        cidr_block = "0.0.0.0/0"
-      }
-    }
   }
 }
 
@@ -255,39 +203,9 @@ variable "private_sg_settings" {
   description = "The settings for the private security group"
   type = object({
     name = string
-    ingress = map(object({
-      from_port  = number
-      to_port    = number
-      protocol   = string
-      cidr_block = string
-    }))
-    egress = map(object({
-      protocol   = string
-      cidr_block = string
-    }))
   })
   default = {
     name = "private-sg"
-    ingress = {
-      icmp = {
-        from_port  = -1
-        to_port    = -1
-        protocol   = "icmp"
-        cidr_block = ""
-      }
-      https = {
-        from_port  = 443
-        to_port    = 443
-        protocol   = "tcp"
-        cidr_block = ""
-      }
-    }
-    egress = {
-      default = {
-        protocol   = "-1"
-        cidr_block = "0.0.0.0/0"
-      }
-    }
   }
 }
 
