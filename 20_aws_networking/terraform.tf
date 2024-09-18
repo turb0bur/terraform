@@ -12,7 +12,6 @@ terraform {
     bucket               = "turb0bur-terraform-state"
     key                  = "20-aws-networking/terraform.tfstate"
     region               = "eu-central-1"
-    profile              = "personal"
     workspace_key_prefix = "env"
     dynamodb_table       = "20-aws-networking-terraform-state-lock"
   }
