@@ -3,14 +3,6 @@ resource "aws_launch_template" "public" {
   image_id      = var.public_instances_config.ami
   instance_type = var.public_instances_config.instance_type
 
-  iam_instance_profile {
-    name = aws_iam_instance_profile.ssm_instance_profile.name
-  }
-
-  network_interfaces {
-    security_groups = [aws_security_group.public_sg.id]
-  }
-
   block_device_mappings {
     device_name = var.public_instances_config.root_volume_name
     ebs {
@@ -19,6 +11,19 @@ resource "aws_launch_template" "public" {
       delete_on_termination = var.public_instances_config.ebs_volume.delete_on_termination
     }
   }
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ssm_instance_profile.name
+  }
+
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  network_interfaces {
+    security_groups = [aws_security_group.public_sg.id]
+  }
+
   user_data = filebase64("${path.module}/templates/public_user_data.sh")
 
   tags = {
@@ -54,14 +59,6 @@ resource "aws_launch_template" "private" {
   image_id      = var.private_instances_config.ami
   instance_type = var.private_instances_config.instance_type
 
-  iam_instance_profile {
-    name = aws_iam_instance_profile.ssm_instance_profile.name
-  }
-
-  network_interfaces {
-    security_groups = [aws_security_group.private_sg.id]
-  }
-
   block_device_mappings {
     device_name = var.private_instances_config.root_volume_name
     ebs {
@@ -69,6 +66,18 @@ resource "aws_launch_template" "private" {
       volume_type           = var.private_instances_config.ebs_volume.type
       delete_on_termination = var.private_instances_config.ebs_volume.delete_on_termination
     }
+  }
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ssm_instance_profile.name
+  }
+
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  network_interfaces {
+    security_groups = [aws_security_group.private_sg.id]
   }
 }
 
@@ -100,14 +109,6 @@ resource "aws_launch_template" "nat" {
   image_id      = var.nat_instances_config.ami
   instance_type = var.nat_instances_config.instance_type
 
-  iam_instance_profile {
-    name = aws_iam_instance_profile.ssm_instance_profile.name
-  }
-
-  network_interfaces {
-    security_groups = [aws_security_group.nat_sg.id]
-  }
-
   block_device_mappings {
     device_name = var.nat_instances_config.root_volume_name
     ebs {
@@ -116,6 +117,19 @@ resource "aws_launch_template" "nat" {
       delete_on_termination = var.nat_instances_config.ebs_volume.delete_on_termination
     }
   }
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ssm_instance_profile.name
+  }
+
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  network_interfaces {
+    security_groups = [aws_security_group.nat_sg.id]
+  }
+
   user_data = base64encode(
     templatefile(("${path.module}/templates/nat_user_data.sh.tftpl"),
       {
