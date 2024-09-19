@@ -94,7 +94,7 @@ variable "public_instances_config" {
   })
 }
 
-variable "public_asg_config" {
+variable "public_frontend_asg_config" {
   description = "The common configuration for the public auto scaling group"
   type = object({
     name                      = string
@@ -123,7 +123,7 @@ variable "private_instances_config" {
   })
 }
 
-variable "private_asg_config" {
+variable "private_api_asg_config" {
   description = "The configuration for the private auto scaling group"
   type = object({
     name                      = string
@@ -209,26 +209,26 @@ variable "private_sg_settings" {
   }
 }
 
-variable "public_alb_config" {
+variable "public_frontend_alb_config" {
   description = "The configuration for the public application load balancer"
   type = object({
     name    = string
     tg_name = string
   })
   default = {
-    name    = "public-alb"
-    tg_name = "public-tg"
+    name    = "public-frontend-alb"
+    tg_name = "public-frontend-tg"
   }
 }
 
-variable "private_alb_config" {
+variable "private_api_alb_config" {
   description = "The configuration for the private application load balancer"
   type = object({
     name    = string
     tg_name = string
   })
   default = {
-    name    = "private-alb"
-    tg_name = "private-tg"
+    name    = "private-api-alb"
+    tg_name = "private-api-tg"
   }
 }

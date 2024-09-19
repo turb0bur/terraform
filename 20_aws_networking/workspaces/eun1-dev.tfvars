@@ -46,7 +46,7 @@ public_instances_config = {
   }
 }
 
-public_asg_config = {
+public_frontend_asg_config = {
   name                      = "public-asg"
   desired_capacity          = 2
   max_size                  = 2
@@ -71,7 +71,7 @@ private_instances_config = {
   }
 }
 
-private_asg_config = {
+private_api_asg_config = {
   name                      = "private-asg"
   desired_capacity          = 2
   max_size                  = 2

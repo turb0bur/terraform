@@ -31,21 +31,21 @@ resource "aws_launch_template" "public" {
   }
 }
 
-resource "aws_autoscaling_group" "public" {
-  name                = format(local.resource_name, var.public_asg_config.name)
-  desired_capacity    = var.public_asg_config.desired_capacity
-  max_size            = var.public_asg_config.max_size
-  min_size            = var.public_asg_config.min_size
+resource "aws_autoscaling_group" "public_frontend" {
+  name                = format(local.resource_name, var.public_frontend_asg_config.name)
+  desired_capacity    = var.public_frontend_asg_config.desired_capacity
+  max_size            = var.public_frontend_asg_config.max_size
+  min_size            = var.public_frontend_asg_config.min_size
   vpc_zone_identifier = [for subnet in aws_subnet.public : subnet.id]
   launch_template {
     id      = aws_launch_template.public.id
-    version = var.public_asg_config.launch_template_version
+    version = var.public_frontend_asg_config.launch_template_version
   }
-  health_check_type         = var.public_asg_config.health_check_type
-  health_check_grace_period = var.public_asg_config.health_check_grace_period
+  health_check_type         = var.public_frontend_asg_config.health_check_type
+  health_check_grace_period = var.public_frontend_asg_config.health_check_grace_period
 
   dynamic "tag" {
-    for_each = local.public_asg_ec2_tags
+    for_each = local.public_frontend_asg_ec2_tags
     content {
       key                 = tag.key
       value               = tag.value
@@ -81,21 +81,21 @@ resource "aws_launch_template" "private" {
   }
 }
 
-resource "aws_autoscaling_group" "private" {
-  name                = format(local.resource_name, var.private_asg_config.name)
-  desired_capacity    = var.private_asg_config.desired_capacity
-  max_size            = var.private_asg_config.max_size
-  min_size            = var.private_asg_config.min_size
+resource "aws_autoscaling_group" "private_api" {
+  name                = format(local.resource_name, var.private_api_asg_config.name)
+  desired_capacity    = var.private_api_asg_config.desired_capacity
+  max_size            = var.private_api_asg_config.max_size
+  min_size            = var.private_api_asg_config.min_size
   vpc_zone_identifier = [for subnet in aws_subnet.private : subnet.id]
   launch_template {
     id      = aws_launch_template.private.id
-    version = var.private_asg_config.launch_template_version
+    version = var.private_api_asg_config.launch_template_version
   }
-  health_check_type         = var.private_asg_config.health_check_type
-  health_check_grace_period = var.private_asg_config.health_check_grace_period
+  health_check_type         = var.private_api_asg_config.health_check_type
+  health_check_grace_period = var.private_api_asg_config.health_check_grace_period
 
   dynamic "tag" {
-    for_each = local.private_asg_ec2_tags
+    for_each = local.private_api_asg_ec2_tags
     content {
       key                 = tag.key
       value               = tag.value
