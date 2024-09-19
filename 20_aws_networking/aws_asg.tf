@@ -116,6 +116,14 @@ resource "aws_launch_template" "nat" {
       delete_on_termination = var.nat_instances_config.ebs_volume.delete_on_termination
     }
   }
+  user_data = base64encode(
+    templatefile(("${path.module}/templates/nat_user_data.sh.tftpl"),
+      {
+        REGION                 = var.region
+        PRIVATE_ROUTE_TABLE_ID = aws_route_table.private.id
+      }
+    )
+  )
 }
 
 resource "aws_autoscaling_group" "nat" {

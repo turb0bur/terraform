@@ -48,7 +48,7 @@ public_instances_config = {
 
 public_asg_config = {
   name                      = "public-asg"
-  desired_capacity          = 2
+  desired_capacity          = 1
   max_size                  = 2
   min_size                  = 1
   launch_template_version   = "$Latest"
@@ -73,7 +73,7 @@ private_instances_config = {
 
 private_asg_config = {
   name                      = "private-asg"
-  desired_capacity          = 2
+  desired_capacity          = 1
   max_size                  = 2
   min_size                  = 1
   launch_template_version   = "$Latest"
