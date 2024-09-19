@@ -82,7 +82,6 @@ variable "private_route_table_settings" {
 variable "public_instances_config" {
   description = "The common configuration for the public servers"
   type = object({
-    ami                  = string
     instance_type        = string
     template_prefix_name = string
     root_volume_name     = string
@@ -111,7 +110,6 @@ variable "public_frontend_asg_config" {
 variable "private_instances_config" {
   description = "The configuration for the private servers"
   type = object({
-    ami                  = string
     instance_type        = string
     template_prefix_name = string
     root_volume_name     = string
@@ -140,7 +138,6 @@ variable "private_api_asg_config" {
 variable "nat_instances_config" {
   description = "The configuration for the NAT instances"
   type = object({
-    ami                  = string
     instance_type        = string
     template_prefix_name = string
     root_volume_name     = string

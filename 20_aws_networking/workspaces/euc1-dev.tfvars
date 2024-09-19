@@ -35,7 +35,6 @@ subnet_settings = {
 }
 
 public_instances_config = {
-  ami                  = "ami-0de02246788e4a354"
   instance_type        = "t2.micro"
   template_prefix_name = "public-instance-"
   root_volume_name     = "/dev/xvda"
@@ -60,7 +59,6 @@ public_frontend_asg_config = {
 }
 
 private_instances_config = {
-  ami                  = "ami-0de02246788e4a354"
   instance_type        = "t2.micro"
   template_prefix_name = "private-instance-"
   root_volume_name     = "/dev/xvda"
@@ -85,7 +83,6 @@ private_api_asg_config = {
 }
 
 nat_instances_config = {
-  ami                  = "ami-0c3b2f7a7308f788a"
   instance_type        = "t2.micro"
   template_prefix_name = "nat-instance-"
   root_volume_name     = "/dev/xvda"

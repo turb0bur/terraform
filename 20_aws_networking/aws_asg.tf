@@ -1,6 +1,6 @@
 resource "aws_launch_template" "public" {
   name_prefix   = var.public_instances_config.template_prefix_name
-  image_id      = var.public_instances_config.ami
+  image_id      = data.aws_ami.amazon_linux_kernel_5_10_hvm.image_id
   instance_type = var.public_instances_config.instance_type
 
   block_device_mappings {
@@ -56,7 +56,7 @@ resource "aws_autoscaling_group" "public_frontend" {
 
 resource "aws_launch_template" "private" {
   name_prefix   = var.private_instances_config.template_prefix_name
-  image_id      = var.private_instances_config.ami
+  image_id      = data.aws_ami.amazon_linux_kernel_5_10_hvm.image_id
   instance_type = var.private_instances_config.instance_type
 
   block_device_mappings {
@@ -106,7 +106,7 @@ resource "aws_autoscaling_group" "private_api" {
 
 resource "aws_launch_template" "nat" {
   name_prefix   = var.nat_instances_config.template_prefix_name
-  image_id      = var.nat_instances_config.ami
+  image_id      = data.aws_ami.amazon_linux_nat.image_id
   instance_type = var.nat_instances_config.instance_type
 
   block_device_mappings {
