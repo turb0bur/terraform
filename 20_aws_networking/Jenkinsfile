@@ -69,8 +69,16 @@ pipeline {
                 expression { return !params.DESTROY }
             }
             steps {
-                dir("${env.PROJECT}") {
-                    sh "terraform plan -out=tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform plan -out=tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                    }
                 }
             }
         }
@@ -81,8 +89,16 @@ pipeline {
             }
             steps {
                 input message: 'Approve to proceed with Terraform Apply?', ok: 'Approve'
-                dir("${env.PROJECT}") {
-                    sh "terraform apply -auto-approve tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform apply -auto-approve tfplan -no-color"
+                    }
                 }
             }
         }
@@ -93,8 +109,16 @@ pipeline {
             }
             steps {
                 input message: 'Approve to proceed with Terraform Destroy?', ok: 'Destroy'
-                dir("${env.PROJECT}") {
-                    sh "terraform destroy -auto-approve --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform destroy -auto-approve --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                    }
                 }
             }
         }
