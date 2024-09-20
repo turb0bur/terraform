@@ -31,8 +31,8 @@ resource "aws_iam_role_policy" "ec2_create_route" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = "ec2:CreateRoute",
+        Effect   = "Allow",
+        Action   = "ec2:CreateRoute",
         Resource = format("arn:aws:ec2:%s:%s:route-table/*", var.region, data.aws_caller_identity.current.account_id)
       }
     ]
