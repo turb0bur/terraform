@@ -1,0 +1,132 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT = '20_aws_networking'
+        AWS_CREDENTIALS = 'aws-credentials'
+    }
+
+    tools {
+        terraform "tf_1_9_5"
+    }
+
+    parameters {
+        choice(
+            name: 'WORKSPACE',
+            choices: ['euc1-dev', 'euc1-prod', 'eun1-dev', 'eun1-prod'],
+            description: 'Select the Terraform workspace'
+        )
+        booleanParam(
+            name: 'DESTROY',
+            defaultValue: false,
+            description: 'Destroy the infrastructure'
+        )
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git(
+                    url: 'git@github.com:turb0bur/terraform.git',
+                    credentialsId: 'github-turb0bur',
+                    branch: 'mentoring'
+                )
+                script {
+                    currentBuild.description = "<b>Workspace:</b> ${params.WORKSPACE}"
+                }
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh """
+                            terraform init -no-color
+                            terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                dir("${env.PROJECT}") {
+                    sh 'terraform validate -no-color'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            when {
+                expression { return !params.DESTROY }
+            }
+            steps {
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform plan -out=tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            when {
+                expression { return !params.DESTROY }
+            }
+            steps {
+                input message: 'Approve to proceed with Terraform Apply?', ok: 'Approve'
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform apply -auto-approve tfplan -no-color"
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when {
+                expression { return params.DESTROY }
+            }
+            steps {
+                input message: 'Approve to proceed with Terraform Destroy?', ok: 'Destroy'
+                withCredentials([
+                    aws(
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        credentialsId: "${AWS_CREDENTIALS}",
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir("${env.PROJECT}") {
+                        sh "terraform destroy -auto-approve --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
