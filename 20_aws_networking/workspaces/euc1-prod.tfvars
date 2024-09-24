@@ -34,42 +34,18 @@ subnet_settings = {
   }
 }
 
-public_instances_config = {
-  instance_type        = "t2.small"
-  template_prefix_name = "public-instance-"
-  root_volume_name     = "/dev/xvda"
-  ebs_volume = {
-    size                  = 20
-    type                  = "gp3"
-    delete_on_termination = true
-  }
-}
-
-public_frontend_asg_config = {
-  name                      = "public-asg"
-  desired_capacity          = 2
-  max_size                  = 4
-  min_size                  = 1
-  launch_template_version   = "$Latest"
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
-  tags = {
-    Name = "public-asg-instance"
-  }
-}
-
-private_instances_config = {
-  instance_type        = "t2.small"
+petclinic_instances_config = {
+  instance_type        = "t2.medium"
   template_prefix_name = "private-instance-"
   root_volume_name     = "/dev/xvda"
   ebs_volume = {
-    size                  = 20
+    size                  = 40
     type                  = "gp3"
     delete_on_termination = true
   }
 }
 
-private_api_asg_config = {
+petclinic_asg_config = {
   name                      = "private-asg"
   desired_capacity          = 2
   max_size                  = 4
@@ -90,5 +66,24 @@ nat_instances_config = {
     size                  = 8
     type                  = "gp3"
     delete_on_termination = true
+  }
+}
+
+ecs_cluster_config = {
+  name = "petclinic-cluster"
+  task_definitions = {
+    petclinic = {
+      family                   = "petclinic-task"
+      network_mode             = "bridge"
+      requires_compatibilities = ["EC2"]
+      container_name           = "petclinic"
+      container_port           = 8081
+    }
+  }
+  services = {
+    petclinic = {
+      name          = "petclinic-service"
+      desired_count = 4
+    }
   }
 }
