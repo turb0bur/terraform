@@ -96,8 +96,8 @@ variable "private_route_table_settings" {
   }
 }
 
-variable "public_instances_config" {
-  description = "The common configuration for the public servers"
+variable "petclinic_instances_config" {
+  description = "The configuration for the application instances for ECS pool"
   type = object({
     instance_type        = string
     template_prefix_name = string
@@ -110,36 +110,8 @@ variable "public_instances_config" {
   })
 }
 
-variable "public_frontend_asg_config" {
-  description = "The common configuration for the public auto scaling group"
-  type = object({
-    name                      = string
-    desired_capacity          = number
-    max_size                  = number
-    min_size                  = number
-    launch_template_version   = string
-    health_check_type         = string
-    health_check_grace_period = number
-    tags                      = map(string)
-  })
-}
-
-variable "private_instances_config" {
-  description = "The configuration for the private servers"
-  type = object({
-    instance_type        = string
-    template_prefix_name = string
-    root_volume_name     = string
-    ebs_volume = object({
-      size                  = number
-      type                  = string
-      delete_on_termination = bool
-    })
-  })
-}
-
-variable "private_api_asg_config" {
-  description = "The configuration for the private auto scaling group"
+variable "petclinic_asg_config" {
+  description = "The configuration for auto scaling group for Petclinic application"
   type = object({
     name                      = string
     desired_capacity          = number
