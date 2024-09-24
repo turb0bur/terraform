@@ -175,8 +175,8 @@ variable "nat_sg_settings" {
   }
 }
 
-variable "public_sg_settings" {
-  description = "The settings for the public security group"
+variable "public_alb_sg_settings" {
+  description = "The settings for the Internet-faced Application Load Balancer security group"
   type = object({
     name = string
   })
@@ -185,8 +185,8 @@ variable "public_sg_settings" {
   }
 }
 
-variable "private_sg_settings" {
-  description = "The settings for the private security group"
+variable "private_instances_sg_settings" {
+  description = "The settings for the security group for the private instances"
   type = object({
     name = string
   })
@@ -195,27 +195,15 @@ variable "private_sg_settings" {
   }
 }
 
-variable "public_frontend_alb_config" {
-  description = "The configuration for the public application load balancer"
+variable "public_alb_config" {
+  description = "The configuration for the Internet-faced Application Load Balancer"
   type = object({
     name    = string
     tg_name = string
   })
   default = {
-    name    = "public-frontend-alb"
-    tg_name = "public-frontend-tg"
-  }
-}
-
-variable "private_api_alb_config" {
-  description = "The configuration for the private application load balancer"
-  type = object({
-    name    = string
-    tg_name = string
-  })
-  default = {
-    name    = "private-api-alb"
-    tg_name = "private-api-tg"
+    name    = "petclinic-alb"
+    tg_name = "petclinic-tg"
   }
 }
 
