@@ -1,0 +1,16 @@
+[
+   {
+      "name": "${container_name}",
+      "image": "${petclinic_image}",
+      "memory": 256,
+      "cpu": 256,
+      "essential": true,
+      "portMappings": [
+         {
+            "containerPort": ${container_port},
+            "hostPort": 0,
+            "protocol": "tcp"
+         }
+      ]
+   }
+]

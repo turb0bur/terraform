@@ -8,6 +8,23 @@ variable "environment" {
   type        = string
 }
 
+variable "ecr_repository" {
+  description = "The name of the ECR repository"
+  type        = string
+  default     = "turb0bur/spring-petclinic"
+}
+
+variable "petclinic_image" {
+  description = "The Petclinic application docker image"
+  type        = string
+  default     = "spring-petclinic"
+}
+
+variable "petclinic_image_tag" {
+  description = "The tag for the Petclinic docker image"
+  type        = string
+}
+
 variable "vpc_settings" {
   description = "The common settings for the VPC"
   type = object({
@@ -228,4 +245,22 @@ variable "private_api_alb_config" {
     name    = "private-api-alb"
     tg_name = "private-api-tg"
   }
+}
+
+variable "ecs_cluster_config" {
+  description = "The name of the ECS cluster"
+  type = object({
+    name = string
+    task_definitions = map(object({
+      family                   = string
+      network_mode             = string
+      requires_compatibilities = list(string)
+      container_name           = string
+      container_port           = number
+    }))
+    services = map(object({
+      name          = string
+      desired_count = number
+    }))
+  })
 }
