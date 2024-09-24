@@ -79,6 +79,14 @@ resource "aws_launch_template" "private" {
   network_interfaces {
     security_groups = [aws_security_group.private_sg.id]
   }
+
+  user_data = base64encode(
+    templatefile(("${path.module}/templates/app_user_data.sh.tftpl"),
+      {
+        ECS_CLUSTER_NAME = aws_ecs_cluster.petclinic.name
+      }
+    )
+  )
 }
 
 resource "aws_autoscaling_group" "private_api" {
