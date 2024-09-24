@@ -14,12 +14,6 @@ variable "ecr_repository" {
   default     = "turb0bur/spring-petclinic"
 }
 
-variable "petclinic_image" {
-  description = "The Petclinic application docker image"
-  type        = string
-  default     = "spring-petclinic"
-}
-
 variable "petclinic_image_tag" {
   description = "The tag for the Petclinic docker image"
   type        = string

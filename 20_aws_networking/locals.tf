@@ -11,5 +11,5 @@ locals {
   nat_asg_ec2_tags       = merge({ Environment = var.environment }, var.nat_asg_config.tags)
 
   ecr_repository_uri = format("%s.dkr.ecr.eu-central-1.amazonaws.com/%s", data.aws_caller_identity.current.account_id, var.ecr_repository)
-  petclinic_image    = format("%s/%s:%s", local.ecr_repository_uri, var.petclinic_image, var.petclinic_image_tag)
+  petclinic_image    = format("%s:%s", local.ecr_repository_uri, var.petclinic_image_tag)
 }
