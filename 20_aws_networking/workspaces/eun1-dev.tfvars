@@ -84,6 +84,10 @@ ecs_cluster_config = {
     petclinic = {
       name          = "petclinic-service"
       desired_count = 2
+      deployment = {
+        min_percent = 50
+        max_percent = 200
+      }
     }
   }
 }

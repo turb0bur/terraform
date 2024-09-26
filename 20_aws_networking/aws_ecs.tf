@@ -16,8 +16,8 @@ resource "aws_ecs_task_definition" "petclinic" {
   container_definitions = templatefile(("${path.module}/container_definitions/petclinic.json.tftpl"),
     {
       petclinic_image = local.petclinic_image
-      container_name = var.ecs_cluster_config.task_definitions.petclinic.container_name
-      container_port = var.ecs_cluster_config.task_definitions.petclinic.container_port
+      container_name  = var.ecs_cluster_config.task_definitions.petclinic.container_name
+      container_port  = var.ecs_cluster_config.task_definitions.petclinic.container_port
     }
   )
 
@@ -27,10 +27,12 @@ resource "aws_ecs_task_definition" "petclinic" {
 }
 
 resource "aws_ecs_service" "petclinic" {
-  name            = format(local.resource_name, var.ecs_cluster_config.services.petclinic.name)
-  cluster         = aws_ecs_cluster.petclinic.id
-  task_definition = aws_ecs_task_definition.petclinic.arn
-  desired_count   = var.ecs_cluster_config.services.petclinic.desired_count
+  name                               = format(local.resource_name, var.ecs_cluster_config.services.petclinic.name)
+  cluster                            = aws_ecs_cluster.petclinic.id
+  task_definition                    = aws_ecs_task_definition.petclinic.arn
+  desired_count                      = var.ecs_cluster_config.services.petclinic.desired_count
+  deployment_minimum_healthy_percent = var.ecs_cluster_config.services.petclinic.deployment.min_percent
+  deployment_maximum_percent         = var.ecs_cluster_config.services.petclinic.deployment.max_percent
 
   load_balancer {
     target_group_arn = aws_lb_target_group.petclinic.arn

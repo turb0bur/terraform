@@ -215,6 +215,10 @@ variable "ecs_cluster_config" {
     services = map(object({
       name          = string
       desired_count = number
+      deployment = object({
+        min_percent = number
+        max_percent = number
+      })
     }))
   })
 }
