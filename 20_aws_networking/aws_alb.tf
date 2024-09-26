@@ -1,10 +1,9 @@
 resource "aws_lb" "petclinic_app" {
-  name                   = var.public_alb_config.name
-  internal               = false
-  load_balancer_type     = "application"
-  enable_xff_client_port = true
-  security_groups        = [aws_security_group.public_alb_sg.id]
-  subnets                = [for subnet in aws_subnet.public : subnet.id]
+  name               = var.public_alb_config.name
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.public_alb_sg.id]
+  subnets            = [for subnet in aws_subnet.public : subnet.id]
 }
 
 resource "aws_lb_target_group" "petclinic" {
