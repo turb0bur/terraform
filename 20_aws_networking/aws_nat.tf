@@ -26,7 +26,7 @@ resource "aws_launch_template" "nat" {
   }
 
   user_data = base64encode(
-    templatefile(("${path.module}/templates/nat_user_data.sh.tftpl"),
+    templatefile(("${path.module}/templates/user_data/nat_user_data.sh.tftpl"),
       {
         REGION                 = var.region
         PRIVATE_ROUTE_TABLE_ID = aws_route_table.private.id

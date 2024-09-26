@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "petclinic" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
 
-  container_definitions = templatefile(("${path.module}/container_definitions/petclinic.json.tftpl"),
+  container_definitions = templatefile(("${path.module}/templates/container_definitions/petclinic.json.tftpl"),
     {
       petclinic_image = local.petclinic_image
       container_name  = var.ecs_cluster_config.task_definitions.petclinic.container_name

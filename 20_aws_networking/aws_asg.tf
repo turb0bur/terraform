@@ -25,7 +25,7 @@ resource "aws_launch_template" "petclinic" {
   }
 
   user_data = base64encode(
-    templatefile(("${path.module}/templates/app_user_data.sh.tftpl"),
+    templatefile(("${path.module}/templates/user_data/app_user_data.sh.tftpl"),
       {
         ECS_CLUSTER_NAME = aws_ecs_cluster.petclinic.name
       }
