@@ -32,11 +32,22 @@ function start_and_enable_web_server() {
     systemctl enable nginx
 }
 
+function add_instance_to_ecs_cluster_pool() {
+  echo ECS_CLUSTER="${ECS_CLUSTER_NAME}" >> /etc/ecs/ecs.config
+  if grep -q "ECS_CLUSTER=${ECS_CLUSTER_NAME}" /etc/ecs/ecs.config; then
+    echo "Instance has been added to ${ECS_CLUSTER_NAME} ECS cluster pool"
+  else
+    echo "Failed to add instance to ${ECS_CLUSTER_NAME} ECS cluster pool"
+    exit 1
+  fi
+}
+
 function main() {
     install_web_server
     get_instance_metadata
     set_web_server_index_page_content
     start_and_enable_web_server
+    add_instance_to_ecs_cluster_pool
 }
 
 main

@@ -22,54 +22,41 @@ subnet_settings = {
     }
   }
 
-  private = {
+  app = {
     subnet1 = {
-      name = "private-subnet-1"
+      name = "app-subnet-1"
       cidr = "10.10.10.0/24"
     }
     subnet2 = {
-      name = "private-subnet-2"
+      name = "app-subnet-2"
       cidr = "10.10.20.0/24"
+    }
+  }
+
+  db = {
+    subnet1 = {
+      name = "db-subnet-1"
+      cidr = "10.10.30.0/24"
+    }
+    subnet2 = {
+      name = "db-subnet-2"
+      cidr = "10.10.40.0/24"
     }
   }
 }
 
-public_instances_config = {
-  instance_type        = "t3.micro"
-  template_prefix_name = "public-instance-"
-  root_volume_name     = "/dev/xvda"
-  ebs_volume = {
-    size                  = 8
-    type                  = "gp3"
-    delete_on_termination = true
-  }
-}
-
-public_frontend_asg_config = {
-  name                      = "public-asg"
-  desired_capacity          = 2
-  max_size                  = 2
-  min_size                  = 1
-  launch_template_version   = "$Latest"
-  health_check_type         = "EC2"
-  health_check_grace_period = 300
-  tags = {
-    Name = "public-asg-instance"
-  }
-}
-
-private_instances_config = {
-  instance_type        = "t3.micro"
+petclinic_instances_config = {
+  instance_type        = "t3.small"
   template_prefix_name = "private-instance-"
   root_volume_name     = "/dev/xvda"
   ebs_volume = {
-    size                  = 8
+    size                  = 30
     type                  = "gp3"
     delete_on_termination = true
   }
 }
 
-private_api_asg_config = {
+petclinic_asg_config = {
   name                      = "private-asg"
   desired_capacity          = 2
   max_size                  = 2
@@ -91,4 +78,42 @@ nat_instances_config = {
     type                  = "gp3"
     delete_on_termination = true
   }
+}
+
+ecs_cluster_config = {
+  name = "petclinic-cluster"
+  task_definitions = {
+    petclinic = {
+      family                   = "petclinic-task"
+      network_mode             = "bridge"
+      requires_compatibilities = ["EC2"]
+      container_name           = "petclinic"
+      container_port           = 8081
+    }
+  }
+  services = {
+    petclinic = {
+      name          = "petclinic-service"
+      desired_count = 2
+      deployment = {
+        min_percent = 50
+        max_percent = 200
+      }
+    }
+  }
+}
+
+rds_instance_config = {
+  name                    = "petclinic-db"
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.small"
+  parameter_group_name    = "default.mysql8.0"
+  allocated_storage       = 20
+  storage_type            = "gp3"
+  publicly_accessible     = false
+  skip_final_snapshot     = true
+  multi_az                = true
+  backup_retention_period = 7
+  subnet_group_name       = "petclinic-db-subnet-group"
 }

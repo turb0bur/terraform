@@ -24,6 +24,13 @@ function add_route_rules() {
         --region "$${AWS_REGION}"
 }
 
+function disable_source_destination_check() {
+    aws ec2 modify-instance-attribute \
+        --instance-id "$${INSTANCE_ID}" \
+        --no-source-dest-check \
+        --region "$${AWS_REGION}"
+}
+
 function ensure_nat_instance_up() {
     chkconfig iptables on
 }
@@ -32,6 +39,7 @@ function main() {
     enable_ip_forwarding
     get_instance_metadata
     add_route_rules
+    disable_source_destination_check
     ensure_nat_instance_up
 }
 

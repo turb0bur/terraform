@@ -21,14 +21,25 @@ resource "aws_subnet" "public" {
   }
 }
 
-resource "aws_subnet" "private" {
-  for_each          = var.subnet_settings.private
+resource "aws_subnet" "application" {
+  for_each          = var.subnet_settings.app
   vpc_id            = aws_vpc.main.id
-  cidr_block        = local.private_subnet_cidrs[each.key]
-  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.private), each.key))
+  cidr_block        = local.app_subnet_cidrs[each.key]
+  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.app), each.key))
 
   tags = {
-    Name = local.private_subnet_names[each.key]
+    Name = local.app_subnet_names[each.key]
+  }
+}
+
+resource "aws_subnet" "database" {
+  for_each          = var.subnet_settings.db
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.db_subnet_cidrs[each.key]
+  availability_zone = element(data.aws_availability_zones.available.names, index(keys(var.subnet_settings.db), each.key))
+
+  tags = {
+    Name = local.db_subnet_names[each.key]
   }
 }
 
@@ -53,11 +64,19 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table" "private" {
+resource "aws_route_table" "application" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = format(local.resource_name, var.private_route_table_settings.name)
+    Name = format(local.resource_name, var.app_route_table_settings.name)
+  }
+}
+
+resource "aws_route_table" "database" {
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = format(local.resource_name, var.db_route_table_settings.name)
   }
 }
 
@@ -67,8 +86,14 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-resource "aws_route_table_association" "private" {
-  for_each       = aws_subnet.private
+resource "aws_route_table_association" "application" {
+  for_each       = aws_subnet.application
   subnet_id      = each.value.id
-  route_table_id = aws_route_table.private.id
+  route_table_id = aws_route_table.application.id
+}
+
+resource "aws_route_table_association" "database" {
+  for_each       = aws_subnet.database
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.database.id
 }

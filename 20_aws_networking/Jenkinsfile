@@ -21,6 +21,11 @@ pipeline {
             defaultValue: false,
             description: 'Destroy the infrastructure'
         )
+       string(
+           name: 'PETCLINIC_IMAGE_TAG',
+           defaultValue: 'latest',
+           description: 'Tag of the Petclinic Docker image'
+       )
     }
 
     stages {
@@ -77,7 +82,7 @@ pipeline {
                     )
                 ]) {
                     dir("${env.PROJECT}") {
-                        sh "terraform plan -out=tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -no-color"
+                        sh "terraform plan -out=tfplan --var-file=workspaces/${params.WORKSPACE}.tfvars -var petclinic_image_tag=${params.PETCLINIC_IMAGE_TAG} -no-color"
                     }
                 }
             }
