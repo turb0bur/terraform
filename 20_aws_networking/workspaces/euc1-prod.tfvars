@@ -102,3 +102,18 @@ ecs_cluster_config = {
     }
   }
 }
+
+rds_instance_config = {
+  name                    = "petclinic-db"
+  engine                  = "mysql"
+  engine_version          = "8.0"
+  instance_class          = "db.t3.small"
+  parameter_group_name    = "default.mysql8.0"
+  allocated_storage       = 20
+  storage_type            = "gp3"
+  publicly_accessible     = false
+  skip_final_snapshot     = true
+  multi_az                = true
+  backup_retention_period = 7
+  subnet_group_name       = "petclinic-db-subnet-group"
+}

@@ -14,11 +14,6 @@ variable "ecr_repository" {
   default     = "turb0bur/spring-petclinic"
 }
 
-variable "petclinic_image_tag" {
-  description = "The tag for the Petclinic docker image"
-  type        = string
-}
-
 variable "vpc_settings" {
   description = "The common settings for the VPC"
   type = object({
@@ -197,7 +192,7 @@ variable "public_alb_sg_settings" {
     name = string
   })
   default = {
-    name = "public-sg"
+    name = "public-alb-sg"
   }
 }
 
@@ -207,7 +202,17 @@ variable "private_instances_sg_settings" {
     name = string
   })
   default = {
-    name = "private-sg"
+    name = "private-app-sg"
+  }
+}
+
+variable "private_db_sg_settings" {
+  description = "The settings for the security group for the private database instances"
+  type = object({
+    name = string
+  })
+  default = {
+    name = "private-db-sg"
   }
 }
 
@@ -243,4 +248,32 @@ variable "ecs_cluster_config" {
       })
     }))
   })
+}
+
+variable "rds_instance_config" {
+  description = "The configuration for the RDS instance"
+  type = object({
+    name                    = string
+    engine                  = string
+    engine_version          = string
+    instance_class          = string
+    parameter_group_name    = string
+    allocated_storage       = number
+    storage_type            = string
+    publicly_accessible     = bool
+    skip_final_snapshot     = bool
+    multi_az                = bool
+    backup_retention_period = number
+    subnet_group_name       = string
+  })
+}
+
+variable "rds_db_name" {
+  description = "The database name"
+  type        = string
+}
+
+variable "rds_db_user" {
+  description = "The database username"
+  type        = string
 }

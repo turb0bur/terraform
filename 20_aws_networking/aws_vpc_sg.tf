@@ -1,3 +1,6 @@
+##########################################################################################
+# Security Group and Rules for NAT instance
+##########################################################################################
 resource "aws_security_group" "nat_sg" {
   vpc_id = aws_vpc.main.id
   name   = var.nat_sg_settings.name
@@ -19,6 +22,9 @@ resource "aws_vpc_security_group_egress_rule" "default" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+##########################################################################################
+# Security Group and Rules for Internet-faced Application Load Balancer
+##########################################################################################
 resource "aws_security_group" "public_alb_sg" {
   vpc_id = aws_vpc.main.id
   name   = var.public_alb_sg_settings.name
@@ -42,6 +48,9 @@ resource "aws_vpc_security_group_egress_rule" "default_public" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+##########################################################################################
+# Security Group and Rules for private application instances
+##########################################################################################
 resource "aws_security_group" "petclinic_sg" {
   vpc_id = aws_vpc.main.id
   name   = var.private_instances_sg_settings.name
@@ -59,14 +68,13 @@ resource "aws_vpc_security_group_ingress_rule" "icmp_private" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-resource "aws_vpc_security_group_ingress_rule" "petclinic_alb_sg" {
+resource "aws_vpc_security_group_ingress_rule" "alb_to_app" {
   security_group_id            = aws_security_group.petclinic_sg.id
   referenced_security_group_id = aws_security_group.public_alb_sg.id
   from_port                    = 32768
   to_port                      = 65535
   ip_protocol                  = "tcp"
 }
-
 
 resource "aws_vpc_security_group_ingress_rule" "https_for_ssm" {
   security_group_id = aws_security_group.petclinic_sg.id
@@ -76,8 +84,34 @@ resource "aws_vpc_security_group_ingress_rule" "https_for_ssm" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
-resource "aws_vpc_security_group_egress_rule" "default_private" {
+resource "aws_vpc_security_group_egress_rule" "default_app" {
   security_group_id = aws_security_group.petclinic_sg.id
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
+##########################################################################################
+# Security Group and Rules for the RDS instances
+##########################################################################################
+resource "aws_security_group" "rds_sg" {
+  vpc_id = aws_vpc.main.id
+  name   = var.private_db_sg_settings.name
+
+  tags = {
+    Name = format(local.resource_name, var.private_db_sg_settings.name)
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "app_to_db" {
+  security_group_id            = aws_security_group.rds_sg.id
+  referenced_security_group_id = aws_security_group.petclinic_sg.id
+  from_port                    = 3306
+  to_port                      = 3306
+  ip_protocol                  = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "default_rds" {
+  security_group_id = aws_security_group.rds_sg.id
   ip_protocol       = "-1"
   cidr_ipv4         = "0.0.0.0/0"
 }
