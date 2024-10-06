@@ -37,7 +37,11 @@ variable "subnet_settings" {
       name                    = string
       cidr                    = string
     }))
-    private = map(object({
+    app = map(object({
+      name = string
+      cidr = string
+    }))
+    db = map(object({
       name = string
       cidr = string
     }))
@@ -55,7 +59,7 @@ variable "igw_settings" {
 }
 
 variable "public_route_table_settings" {
-  description = "The settings for the public route table"
+  description = "The settings for the public subnet route table"
   type = object({
     routes = map(object({
       cidr_block = string
@@ -72,8 +76,8 @@ variable "public_route_table_settings" {
   }
 }
 
-variable "private_route_table_settings" {
-  description = "The settings for the private route table"
+variable "app_route_table_settings" {
+  description = "The settings for the application subnet route table"
   type = object({
     routes = map(object({
       cidr_block = string
@@ -86,7 +90,25 @@ variable "private_route_table_settings" {
         cidr_block = "0.0.0.0/0"
       }
     }
-    name = "private-route-table"
+    name = "app-route-table"
+  }
+}
+
+variable "db_route_table_settings" {
+  description = "The settings for the database subnet route table"
+  type = object({
+    routes = map(object({
+      cidr_block = string
+    }))
+    name = string
+  })
+  default = {
+    routes = {
+      internet = {
+        cidr_block = "0.0.0.0/0"
+      }
+    }
+    name = "db-route-table"
   }
 }
 

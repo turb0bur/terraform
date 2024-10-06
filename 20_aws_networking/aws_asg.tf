@@ -38,7 +38,7 @@ resource "aws_autoscaling_group" "petclinic_asg" {
   desired_capacity    = var.petclinic_asg_config.desired_capacity
   max_size            = var.petclinic_asg_config.max_size
   min_size            = var.petclinic_asg_config.min_size
-  vpc_zone_identifier = [for subnet in aws_subnet.private : subnet.id]
+  vpc_zone_identifier = [for subnet in aws_subnet.application : subnet.id]
   launch_template {
     id      = aws_launch_template.petclinic.id
     version = var.petclinic_asg_config.launch_template_version

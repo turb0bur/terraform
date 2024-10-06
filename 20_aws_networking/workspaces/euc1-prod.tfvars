@@ -22,14 +22,25 @@ subnet_settings = {
     }
   }
 
-  private = {
+  app = {
     subnet1 = {
-      name = "private-subnet-1"
+      name = "app-subnet-1"
       cidr = "10.1.10.0/24"
     }
     subnet2 = {
-      name = "private-subnet-2"
+      name = "app-subnet-2"
       cidr = "10.1.20.0/24"
+    }
+  }
+
+  db = {
+    db_subnet1 = {
+      name = "db-subnet-1"
+      cidr = "10.1.30.0/24"
+    }
+    db_subnet2 = {
+      name = "db-subnet-2"
+      cidr = "10.1.40.0/24"
     }
   }
 }
