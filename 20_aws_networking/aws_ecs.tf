@@ -15,9 +15,15 @@ resource "aws_ecs_task_definition" "petclinic" {
 
   container_definitions = templatefile(("${path.module}/templates/container_definitions/petclinic.json.tftpl"),
     {
-      petclinic_image = local.petclinic_image
-      container_name  = var.ecs_cluster_config.task_definitions.petclinic.container_name
-      container_port  = var.ecs_cluster_config.task_definitions.petclinic.container_port
+      petclinic_image        = data.aws_ecr_image.petclinic.image_uri
+      container_name         = var.ecs_cluster_config.task_definitions.petclinic.container_name
+      container_port         = var.ecs_cluster_config.task_definitions.petclinic.container_port
+      db_host                = aws_db_instance.petclinic_db.address
+      db_port                = aws_db_instance.petclinic_db.port
+      aws_region             = var.region
+      aws_account_id         = data.aws_caller_identity.current.account_id
+      environment            = var.environment
+      spring_profiles_active = var.environment
     }
   )
 
@@ -40,6 +46,11 @@ resource "aws_ecs_service" "petclinic" {
     container_port   = var.ecs_cluster_config.task_definitions.petclinic.container_port
   }
 
+  lifecycle {
+    ignore_changes = [
+      task_definition,
+    ]
+  }
   tags = {
     Name = format(local.resource_name, var.ecs_cluster_config.services.petclinic.name)
   }

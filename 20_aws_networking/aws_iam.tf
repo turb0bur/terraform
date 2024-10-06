@@ -118,3 +118,30 @@ resource "aws_iam_role_policy_attachment" "ecs_service_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+resource "aws_iam_role_policy" "ecs_task_execution_role_read_ssm_policy" {
+  name = format(local.resource_name, "ecs-task-execution-role-read-ssm-policy")
+  role = aws_iam_role.ecs_task_execution_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ssm:GetParameters",
+          "ssm:GetParameter",
+          "ssm:GetParameterHistory"
+        ],
+        Resource = [
+          format(
+            "arn:aws:ssm:%s:%s:parameter/%s/db/*",
+            var.region,
+            data.aws_caller_identity.current.account_id,
+            local.param_store_prefix
+          ),
+        ]
+      }
+    ]
+  })
+}
