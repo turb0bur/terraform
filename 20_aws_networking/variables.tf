@@ -271,9 +271,11 @@ variable "rds_instance_config" {
 variable "rds_db_name" {
   description = "The database name"
   type        = string
+  default     = "petclinic"
 }
 
 variable "rds_db_user" {
   description = "The database username"
   type        = string
+  default     = "petclinic"
 }
