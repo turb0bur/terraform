@@ -8,6 +8,12 @@ variable "environment" {
   type        = string
 }
 
+variable "ecr_repository" {
+  description = "The name of the ECR repository"
+  type        = string
+  default     = "turb0bur/spring-petclinic"
+}
+
 variable "vpc_settings" {
   description = "The common settings for the VPC"
   type = object({
@@ -26,7 +32,11 @@ variable "subnet_settings" {
       name                    = string
       cidr                    = string
     }))
-    private = map(object({
+    app = map(object({
+      name = string
+      cidr = string
+    }))
+    db = map(object({
       name = string
       cidr = string
     }))
@@ -44,7 +54,7 @@ variable "igw_settings" {
 }
 
 variable "public_route_table_settings" {
-  description = "The settings for the public route table"
+  description = "The settings for the public subnet route table"
   type = object({
     routes = map(object({
       cidr_block = string
@@ -61,8 +71,8 @@ variable "public_route_table_settings" {
   }
 }
 
-variable "private_route_table_settings" {
-  description = "The settings for the private route table"
+variable "app_route_table_settings" {
+  description = "The settings for the application subnet route table"
   type = object({
     routes = map(object({
       cidr_block = string
@@ -75,12 +85,30 @@ variable "private_route_table_settings" {
         cidr_block = "0.0.0.0/0"
       }
     }
-    name = "private-route-table"
+    name = "app-route-table"
   }
 }
 
-variable "public_instances_config" {
-  description = "The common configuration for the public servers"
+variable "db_route_table_settings" {
+  description = "The settings for the database subnet route table"
+  type = object({
+    routes = map(object({
+      cidr_block = string
+    }))
+    name = string
+  })
+  default = {
+    routes = {
+      internet = {
+        cidr_block = "0.0.0.0/0"
+      }
+    }
+    name = "db-route-table"
+  }
+}
+
+variable "petclinic_instances_config" {
+  description = "The configuration for the application instances for ECS pool"
   type = object({
     instance_type        = string
     template_prefix_name = string
@@ -93,36 +121,8 @@ variable "public_instances_config" {
   })
 }
 
-variable "public_frontend_asg_config" {
-  description = "The common configuration for the public auto scaling group"
-  type = object({
-    name                      = string
-    desired_capacity          = number
-    max_size                  = number
-    min_size                  = number
-    launch_template_version   = string
-    health_check_type         = string
-    health_check_grace_period = number
-    tags                      = map(string)
-  })
-}
-
-variable "private_instances_config" {
-  description = "The configuration for the private servers"
-  type = object({
-    instance_type        = string
-    template_prefix_name = string
-    root_volume_name     = string
-    ebs_volume = object({
-      size                  = number
-      type                  = string
-      delete_on_termination = bool
-    })
-  })
-}
-
-variable "private_api_asg_config" {
-  description = "The configuration for the private auto scaling group"
+variable "petclinic_asg_config" {
+  description = "The configuration for auto scaling group for Petclinic application"
   type = object({
     name                      = string
     desired_capacity          = number
@@ -186,46 +186,96 @@ variable "nat_sg_settings" {
   }
 }
 
-variable "public_sg_settings" {
-  description = "The settings for the public security group"
+variable "public_alb_sg_settings" {
+  description = "The settings for the Internet-faced Application Load Balancer security group"
   type = object({
     name = string
   })
   default = {
-    name = "public-sg"
+    name = "public-alb-sg"
   }
 }
 
-variable "private_sg_settings" {
-  description = "The settings for the private security group"
+variable "private_instances_sg_settings" {
+  description = "The settings for the security group for the private instances"
   type = object({
     name = string
   })
   default = {
-    name = "private-sg"
+    name = "private-app-sg"
   }
 }
 
-variable "public_frontend_alb_config" {
-  description = "The configuration for the public application load balancer"
+variable "private_db_sg_settings" {
+  description = "The settings for the security group for the private database instances"
+  type = object({
+    name = string
+  })
+  default = {
+    name = "private-db-sg"
+  }
+}
+
+variable "public_alb_config" {
+  description = "The configuration for the Internet-faced Application Load Balancer"
   type = object({
     name    = string
     tg_name = string
   })
   default = {
-    name    = "public-frontend-alb"
-    tg_name = "public-frontend-tg"
+    name    = "petclinic-alb"
+    tg_name = "petclinic-tg"
   }
 }
 
-variable "private_api_alb_config" {
-  description = "The configuration for the private application load balancer"
+variable "ecs_cluster_config" {
+  description = "The name of the ECS cluster"
   type = object({
-    name    = string
-    tg_name = string
+    name = string
+    task_definitions = map(object({
+      family                   = string
+      network_mode             = string
+      requires_compatibilities = list(string)
+      container_name           = string
+      container_port           = number
+    }))
+    services = map(object({
+      name          = string
+      desired_count = number
+      deployment = object({
+        min_percent = number
+        max_percent = number
+      })
+    }))
   })
-  default = {
-    name    = "private-api-alb"
-    tg_name = "private-api-tg"
-  }
+}
+
+variable "rds_instance_config" {
+  description = "The configuration for the RDS instance"
+  type = object({
+    name                    = string
+    engine                  = string
+    engine_version          = string
+    instance_class          = string
+    parameter_group_name    = string
+    allocated_storage       = number
+    storage_type            = string
+    publicly_accessible     = bool
+    skip_final_snapshot     = bool
+    multi_az                = bool
+    backup_retention_period = number
+    subnet_group_name       = string
+  })
+}
+
+variable "rds_db_name" {
+  description = "The database name"
+  type        = string
+  default     = "petclinic"
+}
+
+variable "rds_db_user" {
+  description = "The database username"
+  type        = string
+  default     = "petclinic"
 }
