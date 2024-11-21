@@ -15,7 +15,7 @@ resource "aws_ecs_task_definition" "petclinic" {
 
   container_definitions = templatefile(("${path.module}/templates/container_definitions/petclinic.json.tftpl"),
     {
-      petclinic_image        = data.aws_ecr_image.petclinic.image_uri
+      petclinic_image        = format("%s:%s", var.ecr_repository_uri, var.petclinic_image_tag)
       container_name         = var.ecs_cluster_config.task_definitions.petclinic.container_name
       container_port         = var.ecs_cluster_config.task_definitions.petclinic.container_port
       db_host                = aws_db_instance.petclinic_db.address

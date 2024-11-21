@@ -19,8 +19,3 @@ data "aws_ami" "amazon_linux_ecs" {
     values = ["amzn2-ami-ecs-inf-hvm-2.0.20240815-x86_64-ebs"]
   }
 }
-
-data "aws_ecr_image" "petclinic" {
-  repository_name = var.ecr_repository
-  most_recent     = true
-}

@@ -8,10 +8,16 @@ variable "environment" {
   type        = string
 }
 
-variable "ecr_repository" {
-  description = "The name of the ECR repository"
+variable "ecr_repository_uri" {
+  description = "The ECR repository URI for the PetClinic application"
   type        = string
-  default     = "turb0bur/spring-petclinic"
+  default     = "278336501300.dkr.ecr.eu-central-1.amazonaws.com/turb0bur/spring-petclinic"
+}
+
+variable "petclinic_image_tag" {
+  description = "Tag of the Docker image for the PetClinic application"
+  type        = string
+  default     = "latest"
 }
 
 variable "vpc_settings" {
