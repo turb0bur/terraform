@@ -12,9 +12,9 @@ resource "aws_db_instance" "petclinic_db" {
   backup_retention_period = var.rds_instance_config.backup_retention_period
   vpc_security_group_ids  = [aws_security_group.rds_sg.id]
   db_subnet_group_name    = aws_db_subnet_group.petclinic.name
-  db_name                 = local.db_creds.name
-  username                = local.db_creds.user
-  password                = local.db_creds.password
+  db_name                 = aws_ssm_parameter.petclinic_db_name.value
+  username                = aws_ssm_parameter.petclinic_db_user.value
+  password                = aws_ssm_parameter.petclinic_db_password.value
 
   tags = {
     Name = format(local.resource_name, var.rds_instance_config.name)

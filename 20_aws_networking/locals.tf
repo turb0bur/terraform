@@ -13,6 +13,5 @@ locals {
   petclinic_asg_ec2_tags = merge({ Environment = var.environment }, var.petclinic_asg_config.tags)
   nat_asg_ec2_tags       = merge({ Environment = var.environment }, var.nat_asg_config.tags)
 
-  param_store_prefix = format("/%s/petclinic", var.environment)
-  db_creds           = jsondecode(data.aws_ssm_parameter.petclinic_db_creds.value)
+  param_store_prefix = format("%s/petclinic", var.environment)
 }

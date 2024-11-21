@@ -1,5 +1,5 @@
 resource "aws_ssm_parameter" "petclinic_db_name" {
-  name  = format("%s/%s", local.param_store_prefix, "db/name")
+  name  = format("/%s/%s", local.param_store_prefix, "db/name")
   type  = "String"
   value = var.rds_db_name
 
@@ -9,7 +9,7 @@ resource "aws_ssm_parameter" "petclinic_db_name" {
 }
 
 resource "aws_ssm_parameter" "petclinic_db_user" {
-  name  = format("%s/%s", local.param_store_prefix, "db/user")
+  name  = format("/%s/%s", local.param_store_prefix, "db/user")
   type  = "String"
   value = var.rds_db_user
 
@@ -19,7 +19,7 @@ resource "aws_ssm_parameter" "petclinic_db_user" {
 }
 
 resource "aws_ssm_parameter" "petclinic_db_password" {
-  name  = format("%s/%s", local.param_store_prefix, "db/password")
+  name  = format("/%s/%s", local.param_store_prefix, "db/password")
   type  = "SecureString"
   value = random_password.db_password.result
 
